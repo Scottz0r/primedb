@@ -75,7 +75,7 @@ static bool is_prime(pval_t num);
 
 static void init(int argc, const char **argv);
 
-static void on_exit(void);
+static void cb_on_exit(void);
 
 static void on_sigint(int param);
 
@@ -87,7 +87,7 @@ static void print_stats();
                                FUNCTIONS
 ------------------------------------------------------------------------*/
 
-void main(int argc, char *argv[])
+void main(int argc, const char *argv[])
 {
     init(argc, argv);
 
@@ -108,7 +108,7 @@ void main(int argc, char *argv[])
     exit(EXIT_SUCCESS);
 }
 
-static void on_exit(void)
+static void cb_on_exit(void)
 {
     log_info("Shutting down program...");
 
@@ -189,7 +189,7 @@ static void init(int argc, const char **argv)
     int     i_rc;
 
     /* Exit callback */
-    atexit(on_exit);
+    atexit(cb_on_exit);
 
     /* Log */
     log_init(BLD_LOG_LEVEL);
@@ -246,8 +246,14 @@ static void on_sigint(int param)
     ** and exit program after closing handles.
     */
     log_info("SIGINT recieved.");
-    dbfile_flush_primes();
-    print_stats();
+
+    /* If finding primes, flush any un-saved values and show stats. */ 
+    if (s_prgm_args.run_type == PRMDB_FIND)
+    {
+        dbfile_flush_primes();
+        print_stats();
+    }
+
     exit(PRMDB_EXIT_ARGS);
 }
 

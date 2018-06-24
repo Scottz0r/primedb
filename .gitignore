@@ -1,3 +1,10 @@
+Debug/
+Release/
+.vs/
+prmdb.txt
+*.vcxproj.filters
+*.vcxproj.user
+
 # Prerequisites
 *.d
 
