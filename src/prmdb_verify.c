@@ -12,7 +12,6 @@ bool verify_chk_file(const char *filename)
 {
     pval_t      counter;
     FILE        *fp;
-    size_t      fpos;
     size_t      fsize;
     uint32_t    in_num;
     bool        is_prm;
@@ -39,8 +38,7 @@ bool verify_chk_file(const char *filename)
 
         if (is_prm == false)
         {
-            fpos = ftell(fp);
-            log_fatal("Number \"%u\" at ps %u is not prime!", in_num, fpos);
+            log_fatal("Number \"%u\" at ps %u is not prime!", in_num, counter);
             result = false;
             break;
         }
