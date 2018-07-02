@@ -25,8 +25,8 @@ TODO List:
 
 #define PRIME_SEARCH_MAX    0xFFFFFFFF  /* Stopping point for searching primes. */
 
-#define MSG_INTERVAL    100000  /* Check message interval. */
-#define FLS_INTERVAL    100000  /* Interval to flush numbers to file. */
+#define MSG_INTERVAL  12500000  /* Check message interval. */
+#define FLS_INTERVAL  12500000  /* Interval to flush numbers to file. */
 
 /* Additional exit codes. */
 #define PRMDB_EXIT_ARGS       2
@@ -139,6 +139,7 @@ static void find_primes()
     pval_t  i;
     int     i_rc;
     bool    is_prm;
+    double  pct_mem;
 
     /* Initialize DB file*/
     i_rc = dbfile_init(s_prgm_args.db_filename);
@@ -170,13 +171,19 @@ static void find_primes()
         ++counter;
         if ((counter % MSG_INTERVAL) == 0)
         {
-            log_info("Checked %u (%u primes)", counter, prmdb_cnt_prm);
+            pct_mem = (double)prmdb_cnt_prm / (double)MAX_PRIME_ARRAY * 100.0;
+            log_info("Checked %u (%u primes, %.1f %% mem)", counter, prmdb_cnt_prm, pct_mem);
         }
 
         if ((counter % FLS_INTERVAL) == 0)
         {
             dbfile_flush_primes();
         }
+    }
+
+    if (prmdb_cnt_prm == MAX_PRIME_ARRAY)
+    {
+        log_info("MEMORY LIMIT HIT. Reached %u 32-bit integers.", MAX_PRIME_ARRAY);
     }
 
     /* Print stats if processing completes. */
@@ -216,6 +223,7 @@ static bool is_prime(pval_t num)
     PRMDB_ASSERT_DEBUG((num % 2) != 0, "Test number is even.");
 
     bool    result;
+    pval_t  p_sqrd;
     pval_t  *ptr_end;
     pval_t  *ptr_prime;
 
@@ -232,6 +240,21 @@ static bool is_prime(pval_t num)
         if (num % *ptr_prime == 0)
         {
             result = false;
+            break;
+        }
+
+        /* 
+        ** Stop looping if the prime is greater than the square root of num,
+        ** or, as written, stop looping when the prime squard is less than num.
+        **
+        **  p > sqrt(x) === p*p > x
+        **
+        ** If p_sqrd is less than ptr_prime, then the calculation overflowed, which means it 
+        ** is greater than num.
+        */
+        p_sqrd = (*ptr_prime) * (*ptr_prime);
+        if ((p_sqrd > num) || (p_sqrd < *ptr_prime))
+        {
             break;
         }
     }

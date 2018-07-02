@@ -12,7 +12,8 @@
                                LITERALS
 ------------------------------------------------------------------------*/
 
-#define MAX_PRIME_ARRAY     52428800 /* 200 MB of 32-bit integers. */
+//#define MAX_PRIME_ARRAY     52428800 /* 200 MB of 32-bit integers. */
+#define MAX_PRIME_ARRAY    268435456 /* 1 GB of 32-bit integers. */
 
 /*------------------------------------------------------------------------
                            EXTERN VARIABLES
