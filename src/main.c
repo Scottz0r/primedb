@@ -181,6 +181,9 @@ static void find_primes()
         }
     }
 
+    /* Flush remaining primes. */
+    dbfile_flush_primes();
+
     if (prmdb_cnt_prm == MAX_PRIME_ARRAY)
     {
         log_info("MEMORY LIMIT HIT. Reached %u 32-bit integers.", MAX_PRIME_ARRAY);

@@ -64,9 +64,9 @@ bool verify_chk_file(const char *filename)
 
 static bool check_prime(pval_t val)
 {
-    pval_t  i;
-    pval_t  i_sqrd;
-    bool    result;
+    uint_fast64_t   i;
+    uint_fast64_t   i_sqrd;
+    bool            result;
 
     if ((val % 2 == 0) || (val % 3 == 0))
     {
